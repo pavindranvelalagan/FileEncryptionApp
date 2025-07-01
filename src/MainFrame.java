@@ -47,17 +47,50 @@ public class MainFrame extends JFrame {
         JButton encryptButton = new JButton("Encrypt");
         JButton decryptButton = new JButton("Decrypt");
 
-        // Action when Encrypt button is clicked (currently a placeholder)
+        // When "Encrypt" is clicked
         encryptButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Encrypt clicked!");
-            // Later, we'll call the FileEncryptor here
+            // Get password from the field
+            String password = new String(passwordField.getPassword());
+
+            // Check if file and password are valid
+            if (selectedFile == null || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please select a file and enter a password.");
+                return;
+            }
+
+            try {
+                // Call the encrypt method from FileEncryptor
+                FileEncryptor.encrypt(selectedFile, password);
+                JOptionPane.showMessageDialog(this, "Encryption successful! Encrypted file saved as: " + selectedFile.getName() + ".enc");
+            } catch (Exception ex) {
+                // Show error if encryption fails
+                JOptionPane.showMessageDialog(this, "Encryption failed: " + ex.getMessage());
+                ex.printStackTrace();
+            }
         });
 
-        // Action when Decrypt button is clicked (currently a placeholder)
+        // When "Decrypt" is clicked
         decryptButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Decrypt clicked!");
-            // Later, we'll call the FileEncryptor here
+            // Get password from the field
+            String password = new String(passwordField.getPassword());
+
+            // Check if file and password are valid
+            if (selectedFile == null || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please select an encrypted file and enter the password.");
+                return;
+            }
+
+            try {
+                // Call the decrypt method from FileEncryptor
+                FileEncryptor.decrypt(selectedFile, password);
+                JOptionPane.showMessageDialog(this, "Decryption successful! File restored.");
+            } catch (Exception ex) {
+                // Show error if decryption fails
+                JOptionPane.showMessageDialog(this, "Decryption failed: " + ex.getMessage());
+                ex.printStackTrace();
+            }
         });
+
 
         // Add components to the vertical panel (top to bottom)
         panel.add(selectFileButton);             // Row 1: Select file button
