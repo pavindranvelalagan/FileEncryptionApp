@@ -14,6 +14,8 @@ public class MainFrame extends JFrame {
     private JTextField fileField;        // Shows selected file path (not editable)
     private JPasswordField passwordField; // Field for user to enter password
     private File selectedFile;           // Stores the selected file from FileChooser
+    private JProgressBar progressBar;   //Shows the progress of the encryption or decryption
+
 
     // Constructor that builds the UI
     public MainFrame() {
@@ -86,6 +88,15 @@ public class MainFrame extends JFrame {
         // Create a password input field
         passwordField = new JPasswordField();
 
+
+
+        // Create progress bar
+        progressBar = new JProgressBar();        // Create progress bar component
+        progressBar.setStringPainted(true);      // Show percentage as text
+        progressBar.setValue(0);                 // Start at 0%
+
+
+
         // Create Encrypt and Decrypt buttons
         JButton encryptButton = new JButton("Encrypt");
         JButton decryptButton = new JButton("Decrypt");
@@ -103,7 +114,7 @@ public class MainFrame extends JFrame {
 
             try {
                 // Call the encrypt method from FileEncryptor
-                FileEncryptor.encrypt(selectedFile, password);
+                FileEncryptor.encrypt(selectedFile, password, progress -> progressBar.setValue(progress));
                 JOptionPane.showMessageDialog(this, "Encryption successful! Encrypted file saved as: " + selectedFile.getName() + ".enc");
             } catch (Exception ex) {
                 // Show error if encryption fails
@@ -125,7 +136,7 @@ public class MainFrame extends JFrame {
 
             try {
                 // Call the decrypt method from FileEncryptor
-                FileEncryptor.decrypt(selectedFile, password);
+                FileEncryptor.decrypt(selectedFile, password, progress -> progressBar.setValue(progress));
                 JOptionPane.showMessageDialog(this, "Decryption successful! File restored.");
             } catch (Exception ex) {
                 // Show error if decryption fails
@@ -140,6 +151,7 @@ public class MainFrame extends JFrame {
         panel.add(fileField);                    // Row 2: Shows selected file path
         panel.add(new JLabel("Enter Password:"));// Row 3: Label above password
         panel.add(passwordField);                // Row 4: Password field
+        panel.add(progressBar);                  // Row 5: Progress bar
 
         // Create a new panel to place Encrypt and Decrypt buttons side-by-side
         JPanel buttonPanel = new JPanel();       // Default is FlowLayout (left to right)
