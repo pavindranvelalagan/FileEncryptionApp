@@ -2,6 +2,9 @@
 import javax.swing.*;              // For GUI components like JFrame, JButton, etc.
 import java.awt.*;                 // For layout managers and styling
 import java.awt.event.*;           // For button click actions
+import java.awt.dnd.*;
+import java.awt.datatransfer.*;
+import java.util.List;
 import java.io.File;               // To handle file selection
 
 // Main class that creates the GUI window
@@ -35,6 +38,46 @@ public class MainFrame extends JFrame {
 
         // Create a text field to show the selected file path
         fileField = new JTextField();
+        // Allow drag and drop into the text field
+        new DropTarget(fileField, new DropTargetListener() {
+        @Override
+        public void dragEnter(DropTargetDragEvent dtde) {}
+
+        @Override
+        public void dragOver(DropTargetDragEvent dtde) {}
+
+        @Override
+        public void dropActionChanged(DropTargetDragEvent dtde) {}
+
+        @Override
+        public void dragExit(DropTargetEvent dte) {}
+
+        @Override
+        public void drop(DropTargetDropEvent dtde) {
+            try {
+                // Accept the drop
+                dtde.acceptDrop(DnDConstants.ACTION_COPY);
+                
+                // Get dropped files
+                Transferable t = dtde.getTransferable();
+                java.util.List<File> droppedFiles = (java.util.List<File>)
+                        t.getTransferData(DataFlavor.javaFileListFlavor);
+
+                // Only handle the first file
+                if (!droppedFiles.isEmpty()) {
+                    selectedFile = droppedFiles.get(0);
+                    fileField.setText(selectedFile.getAbsolutePath());
+                }
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Error processing dropped file: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        }
+        });
+
+
+
         fileField.setEditable(false);  // User cannot type here
 
         // When the "Select File" button is clicked, call chooseFile() method
